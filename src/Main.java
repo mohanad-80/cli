@@ -9,10 +9,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         CommandParser parser = new CommandParser();
         CommandHandler handler = new CommandHandler();
+        Command pwd = parser.parse("pwd");
+        pwd.setPrompt(true);
 
         System.out.println("Welcome to the CLI (Type 'help' for available commands)");
 
         while (true) {
+            handler.execute(pwd);
             System.out.print("> ");
             String input = scanner.nextLine();
             Command command = parser.parse(input);

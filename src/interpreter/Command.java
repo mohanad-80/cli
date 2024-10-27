@@ -1,5 +1,6 @@
 package interpreter;
 
+import java.security.PrivateKey;
 import java.util.List;
 
 public class Command {
@@ -8,6 +9,7 @@ public class Command {
   private String outputFile; // For redirection
   private boolean append; // `true` if `>>`, `false` if `>`
   private Command nextCommand; // For piping `|`
+  private Boolean prompt; // For pwd in prompt
 
   public Command(String name, List<String> arguments) {
     this.name = name;
@@ -41,5 +43,13 @@ public class Command {
 
   public void setNextCommand(Command nextCommand) {
     this.nextCommand = nextCommand;
+  }
+
+  public void setPrompt(Boolean isPrompt) {
+    this.prompt = isPrompt;
+  }
+
+  public Boolean isPrompt() {
+    return prompt;
   }
 }
