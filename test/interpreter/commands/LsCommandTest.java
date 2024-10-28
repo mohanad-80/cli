@@ -1,37 +1,24 @@
 package interpreter.commands;
 
-import java.util.List;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import interpreter.Command;
 import interpreter.InterpreterContext;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public class LsCommandTest {
-  /*
-   * test with only ls
-   * test with -a
-   * test with -r
-   * test with -a -r
-   * test with path
-   * test with -a -r path
-   * test with path that does not exit
-   * test with path not a directory
-   * test with empty directory
-   */
   private InterpreterContext context;
   private LsCommand lsCommand;
 
