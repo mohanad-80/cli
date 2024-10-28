@@ -13,6 +13,17 @@ import interpreter.Command;
 import interpreter.InterpreterContext;
 
 public class CdCommandTest {
+    /*
+     * test normal case
+     * test with no argument
+     * test with multiple arguments (should use the first only)
+     * test with relative path
+     * test with absolute path
+     * test with . and ..
+     * test with nonexisting dir
+     * test with a file
+     * test with no access
+     */
     private InterpreterContext context;
     private CdCommand cdCommand;
 
