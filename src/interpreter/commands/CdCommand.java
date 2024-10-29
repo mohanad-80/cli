@@ -38,9 +38,6 @@ public class CdCommand {
     if (!dir.isDirectory()) {
       return "Error: Not a directory: " + dir.getPath();
     }
-    if (!dir.canRead()) {
-      return "Error: Permission denied: " + dir.getPath();
-    }
 
     // Update context with the new absolute path
     context.setCurrentDirectory(dir.getAbsolutePath());
