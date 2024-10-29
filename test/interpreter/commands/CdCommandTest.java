@@ -13,41 +13,81 @@ import interpreter.Command;
 import interpreter.InterpreterContext;
 
 public class CdCommandTest {
-    private InterpreterContext context;
-    private CdCommand cdCommand;
+  private InterpreterContext context;
+  private CdCommand cdCommand;
 
-    @BeforeEach
-    public void setUp() {
-        context = new InterpreterContext();
-        cdCommand = new CdCommand();
-        context.setCurrentDirectory(System.getProperty("user.dir")); // Set to project root for testing
-    }
+  @BeforeEach
+  public void setUp() {
+    context = new InterpreterContext();
+    cdCommand = new CdCommand();
+    context.setCurrentDirectory(System.getProperty("user.dir")); // Set to project root for testing
+  }
 
-    @Test
-    public void testChangeToExistingDirectory() {
-        Command command = new Command("cd", List.of("src")); // Assuming "src" exists in the project root
-        String result = cdCommand.execute(command, context);
-        assertEquals("Changed directory to: " + new File("src").getAbsolutePath(), result);
-    }
+  @Test
+  public void testChangeToExistingDirectory() {
+    Command command = new Command("cd", List.of("src")); // Assuming "src" exists in the project root
+    String result = cdCommand.execute(command, context);
+    assertEquals("Changed directory to: " + new File("src").getAbsolutePath(), result);
+  }
 
-    @Test
-    public void testChangeToNonexistentDirectory() {
-        Command command = new Command("cd", List.of("nonexistentDir"));
-        String result = cdCommand.execute(command, context);
-        assertEquals("Error: No such directory: " + new File("nonexistentDir").getAbsolutePath(), result);
-    }
+  @Test
+  public void testChangeToNonexistentDirectory() {
+    Command command = new Command("cd", List.of("nonexistentDir"));
+    String result = cdCommand.execute(command, context);
+    assertEquals("Error: No such directory: " + new File("nonexistentDir").getAbsolutePath(), result);
+  }
 
-    @Test
-    public void testEmptyArgument() {
-        Command command = new Command("cd", List.of());
-        String result = cdCommand.execute(command, context);
-        assertEquals("Error: Usage: cd <directory>", result);
-    }
+  @Test
+  public void testEmptyArgument() {
+    Command command = new Command("cd", List.of());
+    String result = cdCommand.execute(command, context);
+    assertEquals("Error: Usage: cd <directory>", result);
+  }
 
-    @Test
-    public void testChangeToParentDirectory() {
-        Command command = new Command("cd", List.of(".."));
-        String result = cdCommand.execute(command, context);
-        assertTrue(result.startsWith("Changed directory to: "));
-    }
+  @Test
+  public void testChangeToParentDirectory() {
+    Command command = new Command("cd", List.of(".."));
+    String result = cdCommand.execute(command, context);
+    assertTrue(result.startsWith("Changed directory to: "));
+  }
+
+  @Test
+  public void testChangeToGrandparentDirectory() {
+    Command command = new Command("cd", List.of("../.."));
+    String result = cdCommand.execute(command, context);
+    assertTrue(result.startsWith("Changed directory to: "));
+  }
+
+  @Test
+  public void testChangeDirectoryWithMultipleArguments() {
+    Command command = new Command("cd", List.of("src", "other/path"));
+    String result = cdCommand.execute(command, context);
+
+    assertEquals("Changed directory to: " + new File("src").getAbsolutePath(), result);
+  }
+
+  @Test
+  public void testChangeDirectoryWithFilePath() {
+    Command command = new Command("cd", List.of("src/Main.java"));
+    String result = cdCommand.execute(command, context);
+
+    assertEquals("Error: Not a directory: " + new File("src/Main.java").getAbsolutePath(), result);
+  }
+
+  @Test
+  public void testChangeDirectoryWithRelativePath() {
+    Command command = new Command("cd", List.of("src/../src"));
+    String result = cdCommand.execute(command, context);
+
+    assertEquals("Changed directory to: " + new File("src/").getAbsolutePath(), result);
+  }
+
+  @Test
+  public void testChangeDirectoryWithAbsolutePath() {
+    Command command = new Command("cd", List.of(System.getProperty("user.home")));
+    String result = cdCommand.execute(command, context);
+
+    assertEquals("Changed directory to: " + System.getProperty("user.home"), result);
+  }
+
 }
