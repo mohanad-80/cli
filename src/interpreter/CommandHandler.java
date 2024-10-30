@@ -1,7 +1,6 @@
 package interpreter;
 
 import interpreter.commands.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,6 +23,9 @@ public class CommandHandler {
           break;
         case "ls":
           output = new LsCommand().execute(command, context);
+          break;
+        case "mkdir":
+          output = new MkdirCommand().execute(command, context);
           break;
         case "exit":
           new ExitCommand().execute();
