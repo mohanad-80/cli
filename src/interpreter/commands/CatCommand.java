@@ -53,9 +53,6 @@ public class CatCommand {
         if (!file.isFile()) {
             return "Error: Not a file: " + file.getPath();
         }
-        if (!file.canRead()) {
-            return "Error: Permission denied: " + file.getPath();
-        }
         try (Scanner scanner = new Scanner(file)) { // Try-with-resources for safety
             while (scanner.hasNextLine()) {
                 content.append(scanner.nextLine()).append('\n');

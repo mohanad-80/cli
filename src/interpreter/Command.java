@@ -1,6 +1,5 @@
 package interpreter;
 
-import java.security.PrivateKey;
 import java.util.List;
 
 public class Command {

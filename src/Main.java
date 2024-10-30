@@ -21,6 +21,8 @@ public class Main {
             Command command = parser.parse(input);
 
             if (command != null) {
+                if (command.getName() == "exit")
+                    scanner.close();
                 handler.execute(command);
             } else {
                 System.out.println("Invalid command. Type 'help' for available commands.");
