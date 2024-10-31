@@ -9,6 +9,8 @@ public class Command {
   private boolean append; // `true` if `>>`, `false` if `>`
   private Command nextCommand; // For piping `|`
   private Boolean prompt; // For pwd in prompt
+  private Boolean hasPreviousCommand;
+  private Command previousCommand;
 
   public Command(String name, List<String> arguments) {
     this.name = name;
@@ -50,5 +52,21 @@ public class Command {
 
   public Boolean isPrompt() {
     return prompt;
+  }
+
+  public Boolean hasPreviousCommand() {
+    return this.hasPreviousCommand;
+  }
+
+  public void setPreviousCommand(Boolean hasPreviousCommand) {
+    this.hasPreviousCommand = hasPreviousCommand;
+  }
+
+  public void setPreviousCommand(Command prevCommand) {
+    previousCommand = prevCommand;
+  }
+
+  public Command getPreviousCommand() {
+    return previousCommand;
   }
 }

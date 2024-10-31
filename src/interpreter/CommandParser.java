@@ -51,6 +51,8 @@ public class CommandParser {
       // Link the previous command for piping
       if (previousCommand != null) {
         previousCommand.setNextCommand(currentCommand);
+        currentCommand.setPreviousCommand(true);
+        currentCommand.setPreviousCommand(previousCommand);
       }
 
       if (firstCommand == null) {

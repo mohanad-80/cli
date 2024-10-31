@@ -173,18 +173,4 @@ class CatCommandTest {
     String result = catCommand.catWithOperators(scanner);
     assertEquals("", result);
   }
-
-  @Test
-  void testExecuteWithArgumentAndOutputFileIsNotNull() {
-    Command command = new Command("cat", List.of("test.txt"));
-    command.setOutputFile("test.txt", false);
-
-    // Prepare the simulated input, including "-1" to break the loop
-    String simulatedInput = "Hello\nWorld\n-1\n";
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
-    System.setIn(inputStream); // Redirect System.in to our simulated input
-
-    String result = catCommand.execute(command, context);
-    assertEquals("Hello\nWorld", result);
-  }
 }

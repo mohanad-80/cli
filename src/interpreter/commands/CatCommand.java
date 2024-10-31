@@ -10,12 +10,26 @@ public class CatCommand {
   public String execute(Command command, InterpreterContext context) {
     if (command.getArguments().isEmpty() || command.getOutputFile() != null) {
       String output = "";
-      System.out.println("You can exit by write '-1' (note if you write -1 at any line, the line will be ignored)");
-      Scanner scanner = new Scanner(System.in);
-      if (command.getOutputFile() != null) {
-        output = catWithOperators(scanner);
+      if (!command.getArguments().isEmpty() && command.getOutputFile() != null) {
+        if (command.hasPreviousCommand() != null && command.hasPreviousCommand()) {
+          if (command.getPreviousCommand().getName().equals("help"))
+            output = new HelpCommand().execute();
+          else {
+            for (String arg : command.getArguments()) {
+              output += arg + '\n';
+            }
+            output = output.substring(0, output.length() - 1);
+          }
+        } else
+          output = catWithFile(command.getArguments().get(0), context);
       } else {
-        catAlone(scanner);
+        System.out.println("You can exit by write '-1' (note if you write -1 at any line, the line will be ignored)");
+        Scanner scanner = new Scanner(System.in);
+        if (command.getOutputFile() != null) {
+          output = catWithOperators(scanner);
+        } else {
+          catAlone(scanner);
+        }
       }
       return output;
     }

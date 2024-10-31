@@ -21,7 +21,8 @@ public class LsCommand {
       } else if (arg.equals("-r")) {
         reverseOrder = true;
       } else {
-        currentDir = new File(arg); // Assume it's a directory path if it's not a flag
+        if (!arg.equals("."))
+          currentDir = new File(arg); // Assume it's a directory path if it's not a flag
       }
     }
 
