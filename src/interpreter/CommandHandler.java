@@ -37,6 +37,12 @@ public class CommandHandler {
         case "cat":
           output = new CatCommand().execute(command, context);
           break;
+        case "mv":
+          output = new MvCommand().execute(command, context);
+          break;
+        // case "rm":
+        //   output = new RmCommand().execute(command, context);
+        //   break;
         default:
           System.out.println("Unknown command: " + command.getName());
       }
