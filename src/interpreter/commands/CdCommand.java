@@ -4,6 +4,7 @@ import interpreter.Command;
 import interpreter.InterpreterContext;
 import java.io.File;
 import java.io.IOException;
+import java.util.StringJoiner;
 
 public class CdCommand {
   public String execute(Command command, InterpreterContext context) {
@@ -12,8 +13,13 @@ public class CdCommand {
       return "Error: Usage: cd <directory>";
     }
 
-    // Get the path from command arguments
-    String targetPath = command.getArguments().get(0);
+    // Concatenate all arguments with spaces in case of spaces in directory names
+    StringJoiner joiner = new StringJoiner(" ");
+    for (String arg : command.getArguments()) {
+      joiner.add(arg);
+    }
+    String targetPath = joiner.toString();
+
     File dir;
 
     // Check if path is absolute or relative
