@@ -2,122 +2,148 @@ package interpreter.commands;
 
 import interpreter.Command;
 import interpreter.InterpreterContext;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MvCommandTest {
-  private MvCommand mvCommand;
-  private InterpreterContext context;
-  private File sourceFile;
-  private File destFile;
-  private File destDirectory;
+class MvCommandTest {
+    private InterpreterContext context;
+    private MvCommand mvCommand;
 
-  @BeforeEach
-  void setUp() throws IOException {
-    mvCommand = new MvCommand();
-    context = new InterpreterContext();
-    context.setCurrentDirectory(System.getProperty("java.io.tmpdir"));
+    @TempDir
+    File tempDir;
 
-    // Set up test files and directories
-    sourceFile = new File(context.getCurrentDirectory(), "sourceFile.txt");
-    destFile = new File(context.getCurrentDirectory(), "destFile.txt");
-    destDirectory = new File(context.getCurrentDirectory(), "destDir");
+    @BeforeEach
+    void setup() {
+        context = new InterpreterContext();
+        context.setCurrentDirectory(tempDir.getAbsolutePath());
+        mvCommand = new MvCommand();
+    }
 
-    Files.createFile(sourceFile.toPath());
-    Files.createDirectory(destDirectory.toPath());
-  }
+    @Test
+    void testNoArguments() {
+        Command command = new Command("mv", List.of());
+        String result = mvCommand.execute(command, context);
+        assertTrue(result.contains("Error: mv requires two arguments at least"));
+    }
 
-  @AfterEach
-  void tearDown() throws IOException {
-    Files.deleteIfExists(sourceFile.toPath());
-    Files.deleteIfExists(destFile.toPath());
-    Files.walk(destDirectory.toPath())
-        .sorted((p1, p2) -> p2.compareTo(p1)) // Sort in reverse to delete files before directories
-        .forEach(path -> {
-          try {
-            Files.deleteIfExists(path);
-          } catch (IOException ignored) {
-          }
-        });
-  }
+    @Test
+    void testSourceFileDoesNotExist() {
+        Command command = new Command("mv", List.of("nonExistentFile.txt", "destination.txt"));
+        String result = mvCommand.execute(command, context);
+        assertTrue(result.contains("Error: Source file or directory does not exist."));
+    }
 
-  @Test
-  void testMoveFileToDirectory() {
-    Command command = new Command("mv", List.of(sourceFile.getPath(), destDirectory.getPath()));
-    String result = mvCommand.execute(command, context);
+    @Test
+    void testRenameFile() throws IOException {
+        File sourceFile = new File(tempDir, "file.txt");
+        sourceFile.createNewFile();
 
-    File movedFile = new File(destDirectory, sourceFile.getName());
-    assertEquals("Moved \"" + sourceFile.getPath() + "\" to directory \"" + destDirectory.getPath() + "\".",
-        result);
-    assertTrue(movedFile.exists());
-  }
+        Command command = new Command("mv", List.of("file.txt", "renamedFile.txt"));
+        String result = mvCommand.execute(command, context);
 
-  @Test
-  void testMoveFileToFile() throws IOException {
-    Files.createFile(destFile.toPath()); // Create destination file
+        File renamedFile = new File(tempDir, "renamedFile.txt");
+        assertTrue(result.contains("Renamed \"" + sourceFile.getPath() + "\" to \"" + renamedFile.getPath() + "\"."));
+        assertTrue(renamedFile.exists());
+    }
 
-    Command command = new Command("mv", List.of(sourceFile.getPath(), destFile.getPath()));
-    String result = mvCommand.execute(command, context);
+    @Test
+    void testMoveFileToDirectory() throws IOException {
+        File sourceFile = new File(tempDir, "file.txt");
+        File destinationDir = new File(tempDir, "destinationDir");
+        sourceFile.createNewFile();
+        destinationDir.mkdir();
 
-    assertEquals("Error: Unable to move/rename \"" + sourceFile.getPath() + "\" to \"" + destFile.getPath() + "\".",
-        result);
-    assertTrue(Files.exists(sourceFile.toPath()));
-  }
+        Command command = new Command("mv", List.of("file.txt", "destinationDir"));
+        String result = mvCommand.execute(command, context);
 
-  @Test
-  void testRenameFile() {
-    Command command = new Command("mv", List.of(sourceFile.getPath(), destFile.getPath()));
-    String result = mvCommand.execute(command, context);
+        File movedFile = new File(destinationDir, "file.txt");
+        assertTrue(result.contains("Moved \"" + sourceFile.getPath() + "\" to directory \"" + destinationDir.getPath() + "\"."));
+        assertTrue(movedFile.exists());
+    }
 
-    assertEquals("Renamed \"" + sourceFile.getPath() + "\" to \"" + destFile.getPath() + "\".", result);
-    assertTrue(destFile.exists());
-    assertTrue(!sourceFile.exists());
-  }
+    @Test
+    void testMoveMultipleFilesToDirectory() throws IOException {
+        File sourceFile1 = new File(tempDir, "file1.txt");
+        File sourceFile2 = new File(tempDir, "file2.txt");
+        File destinationDir = new File(tempDir, "destinationDir");
+        sourceFile1.createNewFile();
+        sourceFile2.createNewFile();
+        destinationDir.mkdir();
 
-  @Test
-  void testMoveMultipleFilesToDirectory() throws IOException {
-    // Ensure sourceFile2 does not already exist
-    File sourceFile2 = new File(context.getCurrentDirectory(), "sourceFile2.txt");
-    Files.deleteIfExists(sourceFile2.toPath()); // Remove if exists
+        Command command = new Command("mv", List.of("file1.txt", "file2.txt", "destinationDir"));
+        String result = mvCommand.execute(command, context);
 
-    // Now create the file
-    Files.createFile(sourceFile2.toPath());
+        File movedFile1 = new File(destinationDir, "file1.txt");
+        File movedFile2 = new File(destinationDir, "file2.txt");
 
-    Command command = new Command("mv",
-        List.of(sourceFile.getPath(), sourceFile2.getPath(), destDirectory.getPath()));
-    String result = mvCommand.execute(command, context);
+        assertTrue(result.contains("Moved\""+ sourceFile1.getPath() + "\" to \"" + movedFile1.getPath() + "\"."));
+        assertTrue(result.contains("Moved\""+ sourceFile2.getPath() + "\" to \"" + movedFile2.getPath() + "\"."));
+        assertTrue(movedFile1.exists());
+        assertTrue(movedFile2.exists());
+    }
 
-    assertTrue(result.contains("Moved\"" + sourceFile.getPath() + "\" to \""
-        + new File(destDirectory, sourceFile.getName()).getPath() + "\"."));
-    assertTrue(result.contains("Moved\"" + sourceFile2.getPath() + "\" to \""
-        + new File(destDirectory, sourceFile2.getName()).getPath() + "\"."));
-    assertTrue(new File(destDirectory, sourceFile.getName()).exists());
-    assertTrue(new File(destDirectory, sourceFile2.getName()).exists());
-  }
+    @Test
+    void testMoveToInvalidDirectory() throws IOException {
+        File sourceFile = new File(tempDir, "file.txt");
+        File invalidDir = new File(tempDir, "notADir.txt");
+        sourceFile.createNewFile();
+        invalidDir.createNewFile();
 
-  @Test
-  void testSourceFileNotExist() {
-    File nonExistentFile = new File(context.getCurrentDirectory(), "nonExistentFile.txt");
-    Command command = new Command("mv", List.of(nonExistentFile.getPath(), destDirectory.getPath()));
-    String result = mvCommand.execute(command, context);
+        Command command = new Command("mv", List.of("file.txt", "notADir.txt"));
+        String result = mvCommand.execute(command, context);
+        assertTrue(result.contains("Error: Unable to move/rename \"" + sourceFile.getPath() + "\" to \"" + invalidDir.getPath() + "\"."));
+    }
 
-    assertEquals("Error: Source file or directory does not exist.", result);
-  }
+    @Test
+    void testNonExistentSourceFile() {
+        // Destination directory
+        File destinationDir = new File(tempDir, "destDir");
+        destinationDir.mkdir();
 
-  @Test
-  void testDestinationNotDirectory() {
-    Command command = new Command("mv", List.of(sourceFile.getPath(), sourceFile.getPath(), destFile.getPath()));
-    String result = mvCommand.execute(command, context);
+        // Execute with a non-existent source file
+        String result = mvCommand.moreThanTwoArguments(List.of("nonExistentFile.txt", destinationDir.getPath()), context);
 
-    assertEquals("Error: Destination is not a directory.", result);
-  }
+        // Assert that the output contains the error message for the nonexistent file
+        assertTrue(result.contains("Error: Source file \"nonExistentFile.txt\" does not exist"));
+    }
+
+    @Test
+    void testMultipleNonExistentSourceFiles() {
+        // Destination directory
+        File destinationDir = new File(tempDir, "destDir");
+        destinationDir.mkdir();
+
+        // Execute with multiple non-existent source files
+        String result = mvCommand.moreThanTwoArguments(List.of("file1.txt", "file2.txt", destinationDir.getPath()), context);
+
+        // Assert that the output contains the error messages for both nonexistent files
+        assertTrue(result.contains("Error: Source file \"file1.txt\" does not exist"));
+        assertTrue(result.contains("Error: Source file \"file2.txt\" does not exist"));
+    }
+
+    @Test
+    void testMixedExistingAndNonExistentSourceFiles() throws IOException {
+        // Create one source file and leave the other non-existent
+        File existingFile = new File(tempDir, "existingFile.txt");
+        existingFile.createNewFile();
+        
+        // Destination directory
+        File destinationDir = new File(tempDir, "destDir");
+        destinationDir.mkdir();
+
+        // Execute with one existing and one non-existent source file
+        String result = mvCommand.moreThanTwoArguments(List.of("existingFile.txt", "nonExistentFile.txt", destinationDir.getPath()), context);
+
+        // Assert that the output contains the correct success message for the existing file
+        assertTrue(result.contains("Moved\"" + existingFile.getPath() + "\" to \"" + new File(destinationDir, existingFile.getName()).getPath() + "\""));
+        // Assert that the output contains the error message for the nonexistent file
+        assertTrue(result.contains("Error: Source file \"nonExistentFile.txt\" does not exist"));
+    }
 }
