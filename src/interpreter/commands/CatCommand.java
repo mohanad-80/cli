@@ -11,7 +11,7 @@ public class CatCommand {
     if (command.getArguments().isEmpty() || command.getOutputFile() != null) {
       String output = "";
       if (!command.getArguments().isEmpty() && command.getOutputFile() != null) {
-        if (command.hasPreviousCommand() != null && command.hasPreviousCommand()) {
+        if (command.getPreviousCommand() != null) {
           if (command.getPreviousCommand().getName().equals("help"))
             output = new HelpCommand().execute();
           else {

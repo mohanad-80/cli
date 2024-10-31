@@ -173,4 +173,67 @@ class CatCommandTest {
     String result = catCommand.catWithOperators(scanner);
     assertEquals("", result);
   }
+  @Test
+  void testExecuteWithNoArgumentsButWithOutputFile() {
+      Command command = new Command("cat", List.of());
+      command.setOutputFile("output.txt", false);
+
+      // Simulate user input
+      String simulatedInput = "input1\ninput2\n-1\n";
+      ByteArrayInputStream inputStream = new ByteArrayInputStream(simulatedInput.getBytes());
+      System.setIn(inputStream);
+
+      String result = catCommand.execute(command, context);
+
+      assertEquals("input1\ninput2", result, 
+          "When there is no argument but an output file, catWithOperators should process user input.");
+      System.setIn(System.in); // Reset System.in
+  }
+
+  @Test
+  void testExecuteWithArgumentsAndOutputFileHelpCommand() {
+      // Set up the previous command as "help" and configure the main command
+      Command previousCommand = new Command("help", List.of());
+      Command command = new Command("cat", List.of("arg1", "arg2"));
+      command.setOutputFile("output.txt", false);
+      command.setPreviousCommand(previousCommand);
+
+      // Execute the HelpCommand directly to get the expected output
+      String expectedHelpOutput = new HelpCommand().execute();
+      
+      // Execute the catCommand and capture the output
+      String result = catCommand.execute(command, context);
+      
+      // Verify the output is the same as executing HelpCommand directly
+      assertEquals(expectedHelpOutput, result, "If previous command is 'help', it should execute HelpCommand.");
+  }
+
+  @Test
+  void testExecuteWithArgumentsAndOutputFileNonHelpCommand() {
+    Command previousCommand = new Command("echo", List.of());
+    Command command = new Command("cat", List.of("arg1", "arg2"));
+    command.setOutputFile("output.txt", false);
+    command.setPreviousCommand(previousCommand);
+    
+    String result = catCommand.execute(command, context);
+    
+    assertEquals("arg1\narg2", result, "If previous command is not 'help', it should concatenate arguments with newlines.");
+}
+
+@Test
+void testExecuteWithArgumentsAndOutputFileNoPreviousCommand() throws IOException {
+    // Create a temporary file with some content
+    Path tempFile = Files.createTempFile("testFile", ".txt");
+    Files.write(tempFile, "File Content".getBytes());
+    
+    Command command = new Command("cat", List.of(tempFile.getFileName().toString()));
+    command.setOutputFile("output.txt", false);
+    context.setCurrentDirectory(tempFile.getParent().toFile().getPath());
+    
+    String result = catCommand.execute(command, context);
+    
+    assertEquals("File Content", result, "If no previous command exists, it should read the file content specified in arguments.");
+    
+    Files.deleteIfExists(tempFile); // Cleanup after test
+}
 }
