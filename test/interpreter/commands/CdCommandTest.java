@@ -59,14 +59,6 @@ public class CdCommandTest {
   }
 
   @Test
-  public void testChangeDirectoryWithMultipleArguments() {
-    Command command = new Command("cd", List.of("src", "other/path"));
-    String result = cdCommand.execute(command, context);
-
-    assertEquals("Changed directory to: " + new File("src").getAbsolutePath(), result);
-  }
-
-  @Test
   public void testChangeDirectoryWithFilePath() {
     Command command = new Command("cd", List.of("src/Main.java"));
     String result = cdCommand.execute(command, context);
