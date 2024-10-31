@@ -2,7 +2,6 @@ package interpreter.commands;
 
 import interpreter.Command;
 import interpreter.InterpreterContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +20,13 @@ public class MkdirCommand {
         StringBuilder output = new StringBuilder();
 
         for (String dirName : arguments) {
+
+            dirName = dirName.replace("\"", "");
+
             File dir = new File(baseDir, dirName);
 
-
             // Check if the directory name is invalid
-            String invalidChars = "\\/:*?\"<>|"; // Invalid characters
+            String invalidChars = "<>?/:*"; // Invalid characters
             boolean ok = true;
             for (char c : invalidChars.toCharArray()) {
                 if (dirName.indexOf(c) >= 0) {
