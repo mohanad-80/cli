@@ -37,8 +37,10 @@ public class TouchCommand {
             }
             if (!isValid) continue;
 
-            // Check if the directory already exists
+            // Check if the file already exists
             if (dir.exists()) {
+                // Update modified time if the file exists
+                boolean updated = dir.setLastModified(System.currentTimeMillis());
                 output.append("File already exists: ").append(dirName).append("\n");
             }
             else {
