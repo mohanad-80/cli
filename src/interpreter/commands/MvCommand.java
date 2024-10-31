@@ -59,7 +59,7 @@ public class MvCommand {
       File sourceFile = relativeOrAbsolutePath(arguments.get(i), context);
 
       if (!sourceFile.exists()) {
-        output.append("Error: Source file \"").append(sourceFile.getPath()).append("\" does not exist.\n");
+        output.append("Error: Source file \"").append(arguments.get(i)).append("\" does not exist.\n");
         continue;
       }
       File targetFile = new File(destinationFile, sourceFile.getName());

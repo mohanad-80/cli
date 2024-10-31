@@ -40,6 +40,9 @@ public class RmCommand {
     if (file.isDirectory()) {
       return "Error: Could not remove directory: " + file.getPath();
     } else if (file.isFile()) {
+      if (!file.canWrite()) {
+        return "Error: Could not remove file: " + file.getPath();
+      }
       return file.delete() ? "Removed file: " + file.getPath() : "Error: Could not remove file: " + file.getPath();
     }
 
