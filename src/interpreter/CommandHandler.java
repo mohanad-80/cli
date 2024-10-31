@@ -37,6 +37,12 @@ public class CommandHandler {
         case "cat":
           output = new CatCommand().execute(command, context);
           break;
+        case "mv":
+          output = new MvCommand().execute(command, context);
+          break;
+        case "rm":
+          output = new RmCommand().execute(command, context);
+          break;
         default:
           System.out.println("Unknown command: " + command.getName());
       }
@@ -44,7 +50,8 @@ public class CommandHandler {
       // Handle redirection to a file
       if (command.getOutputFile() != null) {
         try (FileWriter writer = new FileWriter(command.getOutputFile(), command.isAppend())) {
-          // handle -1 case in cat to avoid add newline if no data as the data already ends with newline
+          // handle -1 case in cat to avoid add newline if no data as the data already
+          // ends with newline
           if (output != null && output != "")
             writer.write(output + '\n');
         } catch (IOException e) {
