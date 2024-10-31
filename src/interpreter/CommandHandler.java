@@ -43,6 +43,15 @@ public class CommandHandler {
         case "rm":
           output = new RmCommand().execute(command, context);
           break;
+        case "mkdir":
+          output = new MkdirCommand().execute(command, context);
+          break;
+        case "rmdir":
+          output = new RmdirCommand().execute(command, context);
+          break;
+        case "touch":
+          output = new TouchCommand().execute(command, context);
+          break;
         default:
           System.out.println("Unknown command: " + command.getName());
       }
