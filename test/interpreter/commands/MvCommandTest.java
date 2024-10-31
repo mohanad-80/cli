@@ -113,7 +113,7 @@ class MvCommandTest {
     String result = mvCommand.moreThanTwoArguments(List.of("nonExistentFile.txt", destinationDir.getPath()), context);
 
     // Assert that the output contains the error message for the nonexistent file
-     assertTrue(result.contains("Error: Source file \"nonExistentFile.txt\" does not exist"));
+    assertTrue(result.contains("Error: Source file \"nonExistentFile.txt\" does not exist"));
   }
 
   @Test
