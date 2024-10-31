@@ -71,9 +71,9 @@ public class CommandHandler {
         // Pass output to next command in case of piping
         String[] outputArgs = output.trim().split("\\s+");
         command.getNextCommand().getArguments().addAll(Arrays.asList(outputArgs));
-      } else if (command.isPrompt() != null && command.isPrompt() == true && command.getOutputFile() == null) {
+      } else if (command.isPrompt() != null && command.isPrompt() == true && command.getOutputFile() == null && output != null) {
         System.out.print(output);
-      } else if (command.getOutputFile() == null) {
+      } else if (command.getOutputFile() == null && output != null) {
         System.out.println(output);
       }
       // Move to next command in the pipeline (if any)
