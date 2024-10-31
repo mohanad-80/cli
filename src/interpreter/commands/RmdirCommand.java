@@ -11,7 +11,7 @@ public class RmdirCommand {
     public String execute(Command command, InterpreterContext context) {
         // Check if there are no arguments and show usage message
         if (command.getArguments().isEmpty()) {
-            return "Error: Usage: mkdir <directory1> <directory2> ...";
+            return "Error: Usage: rmdir <directory1> <directory2> ...";
         }
         
         // Get the current directory from context
@@ -27,16 +27,16 @@ public class RmdirCommand {
             
             // Check if the directory name is invalid
             String invalidChars = "<>?/:*"; // Invalid characters
-            boolean ok = true;
+            boolean isValid = true;
             for (char c : invalidChars.toCharArray()) {
                 if (dirName.indexOf(c) >= 0) {
                     output.append("Invalid directory name: ").append(dirName).append("\n");
-                    ok = false;
+                    isValid = false;
                     break;
                 }
             }
 
-            if (!ok) continue;
+            if (!isValid) continue;
 
             // Check if the directory does not exist
             if (!dir.exists()) {

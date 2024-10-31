@@ -27,16 +27,16 @@ public class MkdirCommand {
 
             // Check if the directory name is invalid
             String invalidChars = "<>?/:*"; // Invalid characters
-            boolean ok = true;
+            boolean isValid = true;
             for (char c : invalidChars.toCharArray()) {
                 if (dirName.indexOf(c) >= 0) {
                     output.append("Invalid directory name: ").append(dirName).append("\n");
-                    ok = false;
+                    isValid = false;
                     break;
                 }
             }
 
-            if (!ok) continue;
+            if (!isValid) continue;
 
             // Check if the directory already exists
             if (dir.exists()) {

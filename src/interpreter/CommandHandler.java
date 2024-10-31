@@ -30,9 +30,9 @@ public class CommandHandler {
         case "rmdir":
           output = new RmdirCommand().execute(command, context);
           break;
-        // case "touch":
-        //   output = new TouchCommand().execute(command, context);
-        //   break;
+         case "touch":
+           output = new TouchCommand().execute(command, context);
+           break;
         case "exit":
           new ExitCommand().execute();
           return;
