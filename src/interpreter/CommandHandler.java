@@ -66,13 +66,14 @@ public class CommandHandler {
         } catch (IOException e) {
           System.out.println("Error writing to file: " + e.getMessage());
         }
-      } else if (command.getNextCommand() != null) {
+      }
+      if (command.getNextCommand() != null) {
         // Pass output to next command in case of piping
         String[] outputArgs = output.trim().split("\\s+");
         command.getNextCommand().getArguments().addAll(Arrays.asList(outputArgs));
-      } else if (command.isPrompt() != null && command.isPrompt() == true) {
+      } else if (command.isPrompt() != null && command.isPrompt() == true && command.getOutputFile() == null) {
         System.out.print(output);
-      } else {
+      } else if (command.getOutputFile() == null) {
         System.out.println(output);
       }
       // Move to next command in the pipeline (if any)

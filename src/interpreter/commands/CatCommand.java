@@ -25,7 +25,7 @@ public class CatCommand {
       } else {
         System.out.println("You can exit by write '-1' (note if you write -1 at any line, the line will be ignored)");
         Scanner scanner = new Scanner(System.in);
-        if (command.getOutputFile() != null) {
+        if (command.getOutputFile() != null || command.getNextCommand() != null) {
           output = catWithOperators(scanner);
         } else {
           catAlone(scanner);
