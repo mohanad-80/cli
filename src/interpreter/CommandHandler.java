@@ -40,9 +40,9 @@ public class CommandHandler {
         case "mv":
           output = new MvCommand().execute(command, context);
           break;
-        // case "rm":
-        //   output = new RmCommand().execute(command, context);
-        //   break;
+        case "rm":
+          output = new RmCommand().execute(command, context);
+          break;
         default:
           System.out.println("Unknown command: " + command.getName());
       }
