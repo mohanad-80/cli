@@ -37,7 +37,11 @@ public class MvCommand {
                 File targetFile = new File(destinationFile, sourceFile.getName());
                 Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 return "Moved \"" + sourceFile.getPath() + "\" to directory \"" + destinationFile.getPath() + "\".";
-            } else {
+            } 
+            else if (destinationFile.isFile()) {
+                return "Error: Unable to move/rename \"" + sourceFile.getPath() + "\" to \"" + destinationFile.getPath() + "\".";
+            }
+            else{
                 Files.move(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 return "Renamed \"" + sourceFile.getPath() + "\" to \"" + destinationFile.getPath() + "\".";
             }
